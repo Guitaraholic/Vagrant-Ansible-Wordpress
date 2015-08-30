@@ -27,7 +27,7 @@ Once the process is finished you will see the installation data in your terminal
 
 #### Install wordpress
 
-In your browser go to http://192.168.55.55
+In your browser go to http://192.168.70.70
 
 #### Access wordpress files:
 
@@ -66,13 +66,12 @@ Inside your repository in ```./www/wordpress/``` folder you will find all the wo
 
 ## Configuration
 
-There are two configuration files ```config.yaml``` and ```playbook.yaml```
+There are two configuration files ```config.vagrant.yml``` and ```config.ansible.yml```
 
 ```bash
 .
-├── ansible
-│   └── playbook.yaml
-└── config.yaml
+├── config.ansible.yml
+└── config.vagrant.yml
 
 ```
 
@@ -81,12 +80,11 @@ There are two configuration files ```config.yaml``` and ```playbook.yaml```
   > **./config.yaml**
 
 ```yaml
-- name:                 vag-wordpress
-  box:                  trusty64
-  box_check_update:     false
-  ram:                  2048
-  ip:                   192.168.55.55
-  cpus:                 2
+- name               : vag-wordpress
+  box                : ubuntu/trusty64
+  box_check_update   : false
+  ram                : 1028
+  cpus               : 1
 ```
 
 #### Defining a Forwarded Port
@@ -119,27 +117,47 @@ ports           :
       fmode       : 775
 ```
 
-#### Ansible
+
+## Ansible
+
+
+#### Ansible Playbook
+
+This playbook will install all the dependencies for wordpress.
+
+It can be found in:
 
   > **./ansible/playbook.yaml**
 
-#### Config Wordpress and Mysql
+#### Config Ansible Vars
 
-  > **./ansible/playbook.yaml**
+You can config wordpress database, user and password in ```config.ansible.yml```
+  > **./config.ansible.yml**
 
 
 ```yaml
 ---
-- hosts      : vagrant
-  remote_user: vagrant
-  sudo       : yes
-  vars:
-    mysqlUser        : root            # <---
-    mysqlPass        : vagrant         # <---
-    dbName           : wordpress       # <---
-    dbUser           : wordpress       # <---
-    dbPass           : vagrant         # <---
-    wordpressPath    : /home/vagrant/www
-    vhostTemplatePath: templates/vhost.conf
-    mysqlTemplatePath: templates/mysql
+  # | ······ Set Domain URL
+  wpDomain          : 'mywordpress.local'
+
+  # | ······ MySQL Config
+  mysqlUser         : 'root'
+  mysqlPass         : 'vagrant'
+  mysqlTemplatePath : 'templates/my.cnf'
+
+  # | ······ MySQL Database
+  dbName            : 'wordpress'
+  dbUser            : 'wordpress'
+  dbPass            : 'vagrant'
+
+  # | ······ Wordpress Config
+  wordpressPath     : '/home/vagrant/www'
+  wordpressTemPath  : 'templates/wp-config.php'
+  vhostTemplatePath : 'templates/vhost.conf'
+
+  # | ······ Vagrant User and Group
+  home              : '/home/vagrant'
+  owner             : 'vagrant'
+  group             : 'vagrant'
+
 ```

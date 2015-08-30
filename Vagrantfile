@@ -18,7 +18,6 @@ servers       = YAML.load_file("#{dir}/config.vagrant.yml")
 
 playbook_file = YAML.load_file("#{dir}/config.ansible.yml")
 
-
 # |
 # | Set values for message
 # |
@@ -159,7 +158,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     WORDPRESS > Install
 ················································································
 
-  Url            : \e[0;33mhttp://#{server['network']['ip_public']}\e[0;37m
+  Url            : \e[0;33mhttp://#{server['network']['ip_private']}\e[0;37m
   Url (optional) : \e[0;33mhttp://#{$wpDomain}\e[0;37m
 
   Database Name  : \e[0;33m#{$db_name}\e[0;37m
@@ -174,14 +173,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 ················································································
 
   In your terminal copy and run this command:
-  \e[0;33mecho \"\\n#{server['network']['ip_public']}     #{$wpDomain}\" | sudo tee -a /etc/hosts\e[0;37m
+  \e[0;33mecho \"\\n#{server['network']['ip_private']}     #{$wpDomain}\" | sudo tee -a /etc/hosts\e[0;37m
 
 ················································································
   VAGRANT VM
 ················································································
 
   Vm Name    : #{server['name']}
-  Public ip  : \e[0;33m#{server["network"]["ip_public"]}\e[0;37m
   Private ip : \e[0;33m#{server["network"]["ip_private"]}\e[0;37m
 
 ················································································
