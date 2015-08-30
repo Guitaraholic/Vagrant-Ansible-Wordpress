@@ -10,7 +10,7 @@ You'll need to have the following prerequisites **installed** on your workstatio
 * [Ansible](http://www.ansibleworks.com)
 * Add an appropriate vagrant box (optional)
 ```bash
-vagrant box add trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/20150817.0.0/providers/virtualbox.box
+vagrant box add ubuntu/trusty64
 ```
 
 ## Quick Start
@@ -30,7 +30,10 @@ Once the process is finished you will see the installation data in your terminal
 
 #### Install wordpress
 
-In your browser go to http://192.168.70.70
+In your browser go to http://192.168.70.70 and follow the installation process.
+
+![Wordpress](http://i.imgur.com/EiatoRN.png)
+
 
 #### Access wordpress files:
 
@@ -66,6 +69,7 @@ Inside your repository in ```./www/wordpress/``` folder you will find all the wo
         └── xmlrpc.php
 
 ```
+## Advanced
 
 ## Configuration
 
