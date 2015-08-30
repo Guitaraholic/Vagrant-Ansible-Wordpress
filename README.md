@@ -1,5 +1,6 @@
 # Vagrant Ansible Wordpress
 
+![Vagrant-Ansible-Wordpress](http://i.imgur.com/qMKdgE4.png)
 
 ## Prerequisites
 
