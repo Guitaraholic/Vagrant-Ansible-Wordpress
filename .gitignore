@@ -1,0 +1,25 @@
+# |
+# | ······ Folders
+# |
+.vagrant/
+www/
+share/
+
+# |
+# | ······ Ansible
+# |
+ansible/inventory
+
+
+# |
+# | ······ Wordpress
+# |
+*.wpress
+
+# |
+# | ······ Images
+# |
+*.gif
+*.jpg
+*.png
+*.ico

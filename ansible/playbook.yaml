@@ -1,0 +1,419 @@
+---
+- hosts               : vagrant
+  remote_user         : vagrant
+  sudo                : yes
+
+  vars_files:
+    - '../config.ansible.yml'
+
+# ··············································································
+# ### TASK
+# ··············································································
+
+  tasks               :
+
+# ··············································································
+# ### Update
+# ··············································································
+
+    - name           : Update
+      apt            :
+        update_cache : yes
+
+
+
+# ··············································································
+# ### Install Unzip
+# ··············································································
+
+    - name    : Install unzip
+      apt     :
+        pkg   : unzip
+        state : latest
+
+
+
+# ··············································································
+# ### Install Curl
+# ··············································································
+
+    - name    : Install Curl
+      apt     :
+        pkg   : curl
+        state : latest
+
+
+
+# ··············································································
+    # ### Install Git
+# ··············································································
+
+    - name    : Install git
+      apt     :
+        pkg   : git
+        state : latest
+
+    - name    : Install git-core
+      apt     :
+        pkg   : git-core
+        state : latest
+
+
+
+# ··············································································
+# ### Install PHP
+# ··············································································
+
+    - name       : Install PHP and its modules
+      apt        :
+        pkg      : "{{ item }}"
+        state    : latest
+      with_items :
+        - php5
+        - php5-cli
+        - php5-curl
+        - php5-gd
+        - php5-imagick
+        - php5-mysql
+        - php5-xmlrpc
+
+
+
+# ··············································································
+# ### Apache
+# ··············································································
+
+    - name           : Install Apache and its modules
+      apt            :
+        pkg          : "{{ item }}"
+        state        : latest
+      with_items     :
+        - apache2
+        - libapache2-mod-php5
+
+    - name           : Activate mod_rewrite
+      apache2_module :
+        name         : rewrite
+        state        : present
+      notify         :
+        - Restart apache2
+
+    - name           : Add user to group
+      user           :
+        name         : "{{ owner }}"
+        groups       : www-data
+        append       : yes
+
+
+
+# ··············································································
+# ### Mysql
+# ··············································································
+
+    - name                  : MySQL | Install MySQL client, server and related libraries
+      apt                   :
+        pkg                 : "{{ item }}"
+        state               : latest
+      with_items            :
+        - mysql-client
+        - mysql-server
+        - python-mysqldb
+
+    - name                  : MySQL | Start MySQL service
+      service               :
+        name                : "mysql"
+        state               : started
+        enabled             : yes
+
+    - name                  : MySQL | Setup MySQL creds for root user
+      template              :
+        src                 : "{{ mysqlTemplatePath }}"
+        dest                : "/root/.my.cnf"
+        owner               : "root"
+        group               : "root"
+        mode                : 0600
+
+    - name                  : MySQL | Setup MySQL root password
+      mysql_user            :
+        name                : "root"
+        password            : "{{ mysqlPass }}"
+        host                : "{{ item }}"
+        state               : present
+        check_implicit_admin: yes
+        priv                : "*.*:ALL,GRANT"
+      with_items            :
+        - "{{ ansible_hostname }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
+
+    - name                  : MySQL | Delete blank MySQL users
+      mysql_user            :
+        name                : ""
+        host                : "{{ item }}"
+        state               : absent
+      with_items            :
+        - "{{ ansible_hostname }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
+
+    - name                  : MySQL | Drop MySQL test database
+      mysql_db              :
+        name                : test
+        state               : absent
+
+    - name                  : MySQL | Setup empty database
+      mysql_db              :
+        name                : "{{ dbName }}"
+        encoding            : "utf8"
+        collation           : "utf8_unicode_ci"
+        state               : "present"
+        login_user          : "root"
+        login_password      : "{{ mysqlPass }}"
+
+    - name                  : MySQL | Setup MySQL user
+      mysql_user            :
+        name                : "{{ dbUser }}"
+        password            : "{{ dbPass }}"
+        host                : "localhost"
+        priv                : "*.*:ALL"
+        state               : "present"
+
+
+
+# ··············································································
+    # ### User
+# ··············································································
+
+    - name     : Put "vagrant" user in www-data group
+      user     :
+        name   : "vagrant"
+        groups : "www-data"
+        append : yes
+
+
+
+# ··············································································
+    # ### Wordpress
+# ··············································································
+
+    - name      : Download WordPress
+      get_url   :
+        url     : https://wordpress.org/latest.zip
+        dest    : "{{ wordpressPath }}/wordpress.zip"
+
+    - name      : Unzip WordPress
+      unarchive :
+        src     : "{{ wordpressPath }}/wordpress.zip"
+        dest    : "{{ wordpressPath }}"
+        copy    : no
+
+    - name      : Symlink web root to unzipped WordPress
+      file      :
+        src     : "{{ wordpressPath }}/wordpress"
+        dest    : "/var/www/wordpress"
+        state   : "link"
+
+    - name      : Wordpress | set wp-config.php
+      template  :
+        src     : "{{ wordpressTemPath }}"
+        dest    : "{{ wordpressPath }}/wordpress/"
+        mode    : 0750
+
+
+# ··············································································
+    # ### Set up virtual host
+# ··············································································
+
+    - name      : Copy virtual host setup over
+      template  :
+        src     : "{{ vhostTemplatePath }}"
+        dest    : /etc/apache2/sites-available/
+
+    - name      : Activate virtual host
+      command   : a2ensite vhost
+
+    - name      : Deactivate default vhost
+      command   : a2dissite 000-default
+
+    - name      : Ensure Apache is running
+      service   :
+        name    : apache2
+        state   : restarted
+        enabled : yes
+
+
+
+# ··············································································
+    # ### Install WP-CLI
+# ··············································································
+
+    - name    : Download wp-cli
+      get_url :
+        url   : https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        dest  : /usr/bin/wp
+
+    - name    : Make wp-cli executable
+      file    :
+        path  : /usr/bin/wp
+        mode  : "u+rwx,g+rx,o+rx"
+
+
+# ··············································································
+    # ### Install zsh
+# ··············································································
+
+    - name      : remove folders
+      file      :
+        state   : absent
+        path    : "{{ item }}"
+      with_items:
+        - "{{ home }}/.zshrc"
+        - "{{ home }}/.oh-my-zsh"
+        - "{{ home }}/.antigen"
+        - "{{ home }}/antigen.zshrc"
+        - "{{ home }}/.zshrc"
+
+# ··· Install ZSH
+    - name      : Install ZSH
+      apt       :
+        pkg     : zsh
+        state   : latest
+
+    - name      : Set zsh as default shell
+      user      :
+        name    : "{{ owner }}"
+        shell   : /bin/zsh
+
+
+# ··· Install Oh-My-ZSH
+    - name      : Install Oh-My-ZSH
+      git       :
+        repo    : https://github.com/robbyrussell/oh-my-zsh.git
+        dest    : "{{ home }}/.oh-my-zsh"
+
+    - name      : Install Oh-My-ZSH - Change permissions
+      file      :
+        path    : "{{ home }}/.oh-my-zsh"
+        owner   : "{{ owner }}"
+        group   : "{{ group }}"
+        state   : directory
+        recurse : yes
+
+
+# ··· Create file .zshrc
+    - name      : Create file .zshrc
+      get_url   :
+        url     : "https://raw.githubusercontent.com/Mayccoll/Linux/master/files/zshrc"
+        dest    : "{{ home }}/.zshrc"
+
+    - name      : Change .zshrc owner and group
+      file      :
+        path    : "{{ home }}/.zshrc"
+        owner   : "{{ owner }}"
+        group   : "{{ group }}"
+        mode    : 0644
+
+# ··· Install Antigen
+    - name      : Install Antigen
+      git       :
+        repo    : https://github.com/zsh-users/antigen.git
+        dest    : "{{ home }}/.antigen"
+
+    - name      : Install Antigen - Change permissions
+      file      :
+        path    : "{{ home }}/.antigen"
+        owner   : "{{ owner }}"
+        group   : "{{ group }}"
+        state   : directory
+        recurse : yes
+
+
+# ··· Install Oh-My-ZSH Plugin
+    - name      : Install Syntax Higbhtlighting
+      git       :
+        repo    : https://github.com/zsh-users/zsh-syntax-highlighting.git
+        dest    : "{{ home }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+
+    - name      : Install Syntax Higbhtlighting - Change permissions
+      file      :
+        path    : "{{ home }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+        owner   : "{{ owner }}"
+        group   : "{{ group }}"
+        state   : directory
+        recurse : yes
+
+
+# ··· Add antigen to .zshrc
+    - name      : Get Antigen config file
+      get_url   :
+        url     : "https://raw.githubusercontent.com/Mayccoll/Linux/master/files/antigen.zshrc"
+        dest    : "{{ home }}/antigen.zshrc"
+
+    - name      : Add antigen config file to .zshrc
+      shell     : "cat {{ home }}/antigen.zshrc >> {{ home }}/.zshrc"
+
+    - name      : Remove antigen.zshrc
+      file      :
+        state   : absent
+        path    : "{{ home }}/antigen.zshrc"
+
+
+# ··· Install Terminal Fonts
+    - name      : Install Terminal Fonts
+      git       :
+        repo    : http://github.com/gabrielelana/awesome-terminal-fonts.git
+        dest    : "{{ home }}/awesome-terminal-fonts"
+        version : patching-strategy
+
+    - name      : Install Terminal Fonts - Change permissions
+      file      :
+        path    : "{{ home }}/awesome-terminal-fonts"
+        owner   : "{{ owner }}"
+        group   : "{{ group }}"
+        state   : directory
+        recurse : yes
+
+    - name      : Install Terminal Fonts - Copy Fonts
+      shell     : "cp {{ home }}/awesome-terminal-fonts/patched/*.ttf /usr/local/share/fonts"
+
+    - name      : Install Terminal Fonts - Install fontconfig
+      apt       :
+        pkg     : fontconfig
+        state   : latest
+
+    - name      : Install Terminal Fonts - Update cache
+      shell     : fc-cache -fv
+
+    - name      : Install Terminal Fonts - Remove Folder
+      file      :
+        state   : absent
+        path    : "{{ home }}/awesome-terminal-fonts"
+
+
+# ··············································································
+    # ###  Ensure a locale exists.
+# ··············································································
+
+    - name      : Fix locale es_CO.UTF-8
+      locale_gen:
+        name    : es_CO.UTF-8
+        state   : present
+
+    - name      : Fix locale en_US.UTF-8
+      locale_gen:
+        name    : en_US.UTF-8
+        state   : present
+
+
+
+# ··············································································
+    # ### Handlers
+# ··············································································
+
+  handlers    :
+    - name    : Restart apache2
+      service :
+        name  : apache2
+        state : restarted
