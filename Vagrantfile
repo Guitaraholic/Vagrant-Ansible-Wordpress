@@ -28,24 +28,27 @@ $db_user      = playbook_file['dbUser']
 $db_pass      = playbook_file['dbPass']
 $wpDomain     = playbook_file['wpDomain']
 
-# |
+# | ············································································
 # | Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-# |
+# | ············································································
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     servers.each do |server|
         config.vm.define server["name"] do |srv|
 
+          # |
+          # | :::::: Box
+          # |
           srv.vm.box = server["box"]
 
           if server["box_check_update"]
               srv.vm.box_check_update = server["box_check_update"]
           end
 
-          #|
-          #| :::::: Networdk
-          #|
+          # |
+          # | :::::: Networdk
+          # |
 
           if server["network"]["ip_private"]
             srv.vm.network "private_network", ip: server["network"]["ip_private"]
@@ -55,9 +58,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             srv.vm.network "public_network", ip: server["network"]["ip_public"], :bridge => server["network"]["bridge"]
           end
 
-          #|
-          #| :::::: Ports forwarded
-          #|
+          # |
+          # | :::::: Ports forwarded
+          # |
+
           if server["ports"]
               server['ports'].each do |ports|
                   srv.vm.network "forwarded_port",
@@ -67,9 +71,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               end
           end
 
-          #|
-          #| :::::: Folder Sync
-          #|
+          # |
+          # | :::::: Folder Sync
+          # |
+
           if server["syncDir"]
               server['syncDir'].each do |syncDir|
 
@@ -89,9 +94,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               end
           end
 
-          #|
-          #| :::::: Vm Setup
-          #|
+
+
+# | ············································································
+# | :::::: Vm Setup
+# | ············································································
+
           srv.vm.provider :virtualbox do |vb|
               vb.name     = server["name"]
               vb.memory   = server["ram"]
@@ -105,16 +113,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               vb.customize ["modifyvm", :id, "--usbehci", "off"]
           end
 
-          #|
-          #| :::::: Bash provision
-          #|
+
+
+# | ············································································
+# | :::::: Provisions
+# | ············································································
+
+          # |
+          # | :::::: Provisions - Bash
+          # |
           if server["bash"]
               srv.vm.provision :shell, :path => server["bash"]
           end
 
-          #|
-          #| :::::: Puppet Config
-          #|
+          # |
+          # | :::::: Provisions - Puppet
+          # |
           if server["puppet"]
               srv.vm.provision :puppet do |puppet|
                  puppet.module_path    = "puppet/modules"
@@ -123,9 +137,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               end
           end
 
-          #|
-          #| :::::: Asible Config
-          #|
+          # |
+          # | :::::: Provisions - Asible
+          # |
           if server["ansible"]
               srv.vm.provision:ansible do |ansible|
                   if server["ansible"]["verbose"]
@@ -150,9 +164,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
               end
           end
 
-            #|
-            #| :::::: Vagrant Message
-            #|
+# | ············································································
+# | :::::: Vagrant Message
+# | ············································································
+
             srv.vm.post_up_message = " \e[0;37m
 ················································································
     WORDPRESS > Install
