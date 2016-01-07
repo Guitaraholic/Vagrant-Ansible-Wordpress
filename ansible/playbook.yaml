@@ -4,7 +4,7 @@
   sudo                : yes
 
   vars_files:
-    - '../config.ansible.yml'
+    - '../CONFIG.yaml'
 
 # ··············································································
 # ### TASK
@@ -14,7 +14,7 @@
 
 # ··············································································
 # ### Update
-# ··············································································
+# ·······················f·······················································
 
     - name           : Update
       apt            :
@@ -193,7 +193,6 @@
         append : yes
 
 
-
 # ··············································································
     # ### Wordpress
 # ··············································································
@@ -201,24 +200,24 @@
     - name      : Download WordPress
       get_url   :
         url     : https://wordpress.org/latest.zip
-        dest    : "{{ wordpressPath }}/wordpress.zip"
+        dest    : "{{ wp_path }}/wordpress.zip"
 
     - name      : Unzip WordPress
       unarchive :
-        src     : "{{ wordpressPath }}/wordpress.zip"
-        dest    : "{{ wordpressPath }}"
+        src     : "{{ wp_path }}/wordpress.zip"
+        dest    : "{{ wp_path }}"
         copy    : no
 
     - name      : Symlink web root to unzipped WordPress
       file      :
-        src     : "{{ wordpressPath }}/wordpress"
+        src     : "{{ wp_path }}/wordpress"
         dest    : "/var/www/wordpress"
         state   : "link"
 
     - name      : Wordpress | set wp-config.php
       template  :
         src     : "{{ wordpressTemPath }}"
-        dest    : "{{ wordpressPath }}/wordpress/"
+        dest    : "{{ wp_path }}/wordpress/"
         mode    : 0750
 
 

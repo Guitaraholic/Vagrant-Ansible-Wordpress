@@ -14,19 +14,19 @@ dir = File.dirname(File.expand_path(__FILE__))
 # |
 # | Read YAML files
 # |
-servers       = YAML.load_file("#{dir}/config.vagrant.yml")
+servers       = YAML.load_file("#{dir}/CONFIG.yaml")
 
-playbook_file = YAML.load_file("#{dir}/config.ansible.yml")
+# playbook_file = YAML.load_file("#{dir}/config.ansible.yml")
 
 # |
 # | Set values for message
 # |
-$mysql_user   = playbook_file['mysqlUser']
-$mysql_pass   = playbook_file['mysqlPass']
-$db_name      = playbook_file['dbName']
-$db_user      = playbook_file['dbUser']
-$db_pass      = playbook_file['dbPass']
-$wpDomain     = playbook_file['wpDomain']
+$mysql_user   = servers['mysqlUser']
+$mysql_pass   = servers['mysqlPass']
+$db_name      = servers['dbName']
+$db_user      = servers['dbUser']
+$db_pass      = servers['dbPass']
+$wpDomain     = servers['wpDomain']
 
 # | ············································································
 # | Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
@@ -34,7 +34,7 @@ $wpDomain     = playbook_file['wpDomain']
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-    servers.each do |server|
+    servers["vms"].each do |server|
         config.vm.define server["name"] do |srv|
 
           # |

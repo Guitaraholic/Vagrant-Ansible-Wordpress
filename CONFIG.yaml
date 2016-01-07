@@ -1,0 +1,86 @@
+---
+# | ............................................................................
+# | Config Ansible
+# | ............................................................................
+
+# | ······ Set Domain URL
+wpDomain          : 'mywordpress.local'
+
+# | ······ MySQL Config
+mysqlUser         : 'root'
+mysqlPass         : 'vagrant'
+mysqlTemplatePath : 'templates/my.cnf'
+
+# | ······ MySQL Database
+dbName            : 'wordpress'
+dbUser            : 'wordpress'
+dbPass            : 'vagrant'
+
+# | ······ Wordpress Config
+wp_path           : '/home/vagrant/www'
+wordpressTemPath  : 'templates/wp-config.php'
+vhostTemplatePath : 'templates/vhost.conf'
+
+# | ······ Vagrant User and Group
+home              : '/home/vagrant'
+owner             : 'vagrant'
+group             : 'vagrant'
+
+
+# | ............................................................................
+# | ### Config VirtualBox VM
+# | ............................................................................
+
+vms:
+  - name               : vag-wordpress
+    box                : ubuntu/trusty64
+    box_check_update   : false
+    ram                : 1028
+    cpus               : 2
+
+  # | ······ Defining Netword
+    network :
+      ip_private       : 192.168.70.70
+      ip_public        : 10.0.0.70
+      bridge           : 'eth0'
+
+  # | ······ Defining a Forwarded Port
+    ports :
+      - guest          : 3000
+        host           : 3000
+
+      # - guest          : 80
+      #   host           : 8080
+
+  # | ······ Config Synced folders
+    syncDir :
+      - host           : share
+        guest          : /home/vagrant/share
+        dmode          : 766
+        fmode          : 766
+
+      - host           : www
+        guest          : /home/vagrant/www
+        owner          : www-data
+        group          : www-data
+        dmode          : 775
+        fmode          : 775
+
+  # | ······ Ansible privision
+    ansible :
+      verbose          : v
+      playbook         : ansible/playbook.yaml
+      inventory_path   : ansible/inventory
+      host_key_checking: false
+      limit            : all
+
+  # | ······ GUI
+      # gui              : true
+
+  # | ······ Bash privision
+      # bash             : bash/init.sh
+
+  # | ······ Puppet privision
+      # puppet           : init.pp
+
+# ..............................................................................
