@@ -74,18 +74,17 @@ Inside your repository in ```./www/wordpress/``` folder you will find all the wo
 
 ## Configuration
 
-There are two configuration files ```config.vagrant.yml``` and ```config.ansible.yml```
+There are one configuration file ```CONFIG.yml```.
 
 ```bash
 .
-├── config.ansible.yml
-└── config.vagrant.yml
+└── CONFIG.yml
 
 ```
 
 #### Config VirtualBox VM
 
-  > **./config.yaml**
+  > **./CONFIG.yaml**
 
 ```yaml
 - name               : vag-wordpress
@@ -97,7 +96,7 @@ There are two configuration files ```config.vagrant.yml``` and ```config.ansible
 
 #### Defining a Forwarded Port
 
-  > **./config.yaml**
+  > **./CONFIG.yaml**
 
 ```yaml
 ports           :
@@ -110,7 +109,7 @@ ports           :
 
 #### Config Synced folders
 
-  > **./config.yaml**
+  > **./CONFIG.yaml**
 
 ```yaml
   syncDir         :
@@ -139,8 +138,8 @@ It can be found in:
 
 #### Config Ansible Vars
 
-You can config wordpress database, user and password in ```config.ansible.yml```
-  > **./config.ansible.yml**
+You can config wordpress database, user and password in ```CONFIG.yml```
+  > **./CONFIG.yml**
 
 
 ```yaml
