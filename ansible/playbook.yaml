@@ -304,7 +304,7 @@
 # ··· Create file .zshrc
     - name      : Create file .zshrc
       get_url   :
-        url     : "https://raw.githubusercontent.com/Mayccoll/Linux/master/files/zshrc"
+        url     : "https://raw.githubusercontent.com/Mayccoll/Linux-Utils/master/Install_Files/zshrc"
         dest    : "{{ home }}/.zshrc"
 
     - name      : Change .zshrc owner and group
@@ -347,7 +347,7 @@
 # ··· Add antigen to .zshrc
     - name      : Get Antigen config file
       get_url   :
-        url     : "https://raw.githubusercontent.com/Mayccoll/Linux/master/files/antigen.zshrc"
+        url     : "https://raw.githubusercontent.com/Mayccoll/Linux-Utils/master/Install_Files/antigen.zshrc"
         dest    : "{{ home }}/antigen.zshrc"
 
     - name      : Add antigen config file to .zshrc
