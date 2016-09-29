@@ -1,10 +1,17 @@
 ---
 - hosts               : vagrant
   remote_user         : vagrant
-  sudo                : yes
+  become              : true
+  gather_facts        : false
 
   vars_files:
     - '../CONFIG.yaml'
+
+
+  pre_tasks:
+    - name: 'Install python2'
+      raw: sudo apt -y install python-simplejson
+
 
 # ··············································································
 # ### TASK
@@ -69,13 +76,16 @@
         pkg      : "{{ item }}"
         state    : latest
       with_items :
-        - php5
-        - php5-cli
-        - php5-curl
-        - php5-gd
-        - php5-imagick
-        - php5-mysql
-        - php5-xmlrpc
+        - php7.0
+        - php7.0-cli
+        - php7.0-curl
+        - php7.0-gd
+        - php7.0-mysql
+        - php7.0-xmlrpc
+        - php7.0-json
+        - php7.0-cgi
+        - php-imagick
+        - php7.0-mbstring
 
 
 
@@ -89,7 +99,7 @@
         state        : latest
       with_items     :
         - apache2
-        - libapache2-mod-php5
+        - libapache2-mod-php
 
     - name           : Activate mod_rewrite
       apache2_module :
@@ -142,7 +152,6 @@
         check_implicit_admin: yes
         priv                : "*.*:ALL,GRANT"
       with_items            :
-        - "{{ ansible_hostname }}"
         - 127.0.0.1
         - ::1
         - localhost
@@ -153,7 +162,6 @@
         host                : "{{ item }}"
         state               : absent
       with_items            :
-        - "{{ ansible_hostname }}"
         - 127.0.0.1
         - ::1
         - localhost
@@ -180,6 +188,14 @@
         priv                : "*.*:ALL"
         state               : "present"
 
+
+
+
+    - name: install pma
+      apt: pkg=phpmyadmin state=present
+
+    - name: configure site
+      file: path=/var/www/phpmyadmin src=/usr/share/phpmyadmin state=link
 
 
 # ··············································································
@@ -317,12 +333,12 @@
 # ··· Install Antigen
     - name      : Install Antigen
       git       :
-        repo    : https://github.com/zsh-users/antigen.git
-        dest    : "{{ home }}/.antigen"
+        repo    : https://github.com/Mayccoll-Forks/zsh-git-prompt.git
+        dest    : "{{ home }}/.zsh-git-prompt"
 
     - name      : Install Antigen - Change permissions
       file      :
-        path    : "{{ home }}/.antigen"
+        path    : "{{ home }}/.zsh-git-prompt"
         owner   : "{{ owner }}"
         group   : "{{ group }}"
         state   : directory
@@ -347,16 +363,16 @@
 # ··· Add antigen to .zshrc
     - name      : Get Antigen config file
       get_url   :
-        url     : "https://raw.githubusercontent.com/Mayccoll/Linux-Utils/master/Install_Files/antigen.zshrc"
-        dest    : "{{ home }}/antigen.zshrc"
+        url     : "https://raw.githubusercontent.com/Mayccoll/Linux-Utils/master/Install_Files/git-prompt"
+        dest    : "{{ home }}/git-prompt"
 
     - name      : Add antigen config file to .zshrc
-      shell     : "cat {{ home }}/antigen.zshrc >> {{ home }}/.zshrc"
+      shell     : "cat {{ home }}/git-prompt >> {{ home }}/.zshrc"
 
-    - name      : Remove antigen.zshrc
+    - name      : Remove git-prompt
       file      :
         state   : absent
-        path    : "{{ home }}/antigen.zshrc"
+        path    : "{{ home }}/git-prompt"
 
 
 # ··· Install Terminal Fonts
