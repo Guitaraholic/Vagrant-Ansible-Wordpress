@@ -158,6 +158,14 @@
         - localhost
         - "%"
 
+    - name: Reload privilege tables
+      command: 'mysql -ne "{{ item }}"'
+      with_items:
+        - GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+        - GRANT ALL PRIVILEGES ON *.* TO '{{ dbUser }}'@'%' IDENTIFIED BY '{{ dbPass }}' WITH GRANT OPTION;
+        - FLUSH PRIVILEGES;
+      changed_when: False
+
     - name                  : MySQL | Delete blank MySQL users
       mysql_user            :
         name                : ""
@@ -167,7 +175,6 @@
         - 127.0.0.1
         - ::1
         - localhost
-        - "%"
 
     - name                  : MySQL | Drop MySQL test database
       mysql_db              :
@@ -196,6 +203,8 @@
         dest                : /etc/mysql/mysql.conf.d/mysqld.cnf
         regexp              : "^bind-address"
         line                : "# bind-address = 0.0.0.0"
+      notify:
+          - restart mysql
 
 
 
@@ -433,3 +442,6 @@
       service :
         name  : apache2
         state : restarted
+
+    - name: restart mysql
+      action: service name=mysql state=restarted enabled=yes
