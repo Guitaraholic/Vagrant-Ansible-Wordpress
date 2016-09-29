@@ -155,6 +155,7 @@
         - 127.0.0.1
         - ::1
         - localhost
+        - "%"
 
     - name                  : MySQL | Delete blank MySQL users
       mysql_user            :
@@ -165,6 +166,7 @@
         - 127.0.0.1
         - ::1
         - localhost
+        - "%"
 
     - name                  : MySQL | Drop MySQL test database
       mysql_db              :
@@ -188,14 +190,12 @@
         priv                : "*.*:ALL"
         state               : "present"
 
+    - name                  :  MySQL | Setup MySQL user
+      lineinfile:
+        dest                : /etc/mysql/mysql.conf.d/mysqld.cnf
+        regexp              : "^bind-address"
+        line                : "# bind-address = 0.0.0.0"
 
-
-
-    - name: install pma
-      apt: pkg=phpmyadmin state=present
-
-    - name: configure site
-      file: path=/var/www/phpmyadmin src=/usr/share/phpmyadmin state=link
 
 
 # ··············································································
