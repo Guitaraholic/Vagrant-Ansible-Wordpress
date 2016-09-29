@@ -11,7 +11,7 @@ You'll need to have the following prerequisites **installed** on your workstatio
 * [Ansible](http://www.ansibleworks.com)
 * Add an appropriate vagrant box (optional)
 ```bash
-vagrant box add ubuntu/trusty64
+vagrant box add bento/ubuntu-16.04
 ```
 
 ## Quick Start
@@ -88,7 +88,7 @@ There are one configuration file ```CONFIG.yml```.
 
 ```yaml
 - name               : vag-wordpress
-  box                : ubuntu/trusty64
+  box                : bento/ubuntu-16.04
   box_check_update   : false
   ram                : 1028
   cpus               : 1
