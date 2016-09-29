@@ -23,3 +23,8 @@ playbook.retry
 *.jpg
 *.png
 *.ico
+
+# |
+# | ······ Logs
+# |
+*.log
