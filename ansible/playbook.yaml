@@ -367,16 +367,12 @@
         url     : "https://raw.githubusercontent.com/Mayccoll/Linux-Utils/master/Install_Files/git-prompt"
         dest    : "{{ home }}/git-prompt"
 
-<<<<<<< HEAD
-    - name      : Add antigen config file to .zshrc
-=======
     - name      : Add zsh git prompt config file to .zshrc
->>>>>>> 9d8fcd7a9fe950abbea8ddf0ca65a471187a6b73
       shell     : "cat {{ home }}/git-prompt >> {{ home }}/.zshrc"
 
     - name      : Remove git-prompt
       file      :
-        state   : absent
+        state   : absents
         path    : "{{ home }}/git-prompt"
 
 
