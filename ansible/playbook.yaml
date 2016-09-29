@@ -331,7 +331,7 @@
         group   : "{{ group }}"
         mode    : 0644
 
-# ··· Install v
+# ··· Install  zsh git prompt
     - name      : Install zsh git prompt
       git       :
         repo    : https://github.com/Mayccoll-Forks/zsh-git-prompt.git
@@ -372,7 +372,7 @@
 
     - name      : Remove git-prompt
       file      :
-        state   : absents
+        state   : absent
         path    : "{{ home }}/git-prompt"
 
 
