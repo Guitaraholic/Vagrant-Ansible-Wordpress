@@ -4,6 +4,7 @@
   become              : true
   gather_facts        : false
 
+
   vars_files:
     - '../CONFIG.yaml'
 
@@ -330,13 +331,13 @@
         group   : "{{ group }}"
         mode    : 0644
 
-# ··· Install Antigen
-    - name      : Install Antigen
+# ··· Install v
+    - name      : Install zsh git prompt
       git       :
         repo    : https://github.com/Mayccoll-Forks/zsh-git-prompt.git
         dest    : "{{ home }}/.zsh-git-prompt"
 
-    - name      : Install Antigen - Change permissions
+    - name      : Install zsh git prompt - Change permissions
       file      :
         path    : "{{ home }}/.zsh-git-prompt"
         owner   : "{{ owner }}"
@@ -360,13 +361,17 @@
         recurse : yes
 
 
-# ··· Add antigen to .zshrc
-    - name      : Get Antigen config file
+# ··· Add zsh git prompt to .zshrc
+    - name      : Get zsh git prompt config file
       get_url   :
         url     : "https://raw.githubusercontent.com/Mayccoll/Linux-Utils/master/Install_Files/git-prompt"
         dest    : "{{ home }}/git-prompt"
 
+<<<<<<< HEAD
     - name      : Add antigen config file to .zshrc
+=======
+    - name      : Add zsh git prompt config file to .zshrc
+>>>>>>> 9d8fcd7a9fe950abbea8ddf0ca65a471187a6b73
       shell     : "cat {{ home }}/git-prompt >> {{ home }}/.zshrc"
 
     - name      : Remove git-prompt
