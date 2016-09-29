@@ -17,12 +17,12 @@ dbUser            : 'wordpress'
 dbPass            : 'vagrant'
 
 # | ······ Wordpress Config
-wp_path           : '/home/vagrant/www'
+wp_path           : "{{ lookup('env','HOME') }}/www"
 wordpressTemPath  : 'templates/wp-config.php'
 vhostTemplatePath : 'templates/vhost.conf'
 
 # | ······ Vagrant User and Group
-home              : '/home/vagrant'
+home              : "{{ lookup('env','HOME') }}"
 owner             : 'vagrant'
 group             : 'vagrant'
 
@@ -33,15 +33,15 @@ group             : 'vagrant'
 
 vms:
   - name               : vag-wordpress
-    box                : ubuntu/trusty64
+    box                : bento/ubuntu-16.04
     box_check_update   : false
-    ram                : 1028
+    ram                : 2048
     cpus               : 2
 
   # | ······ Defining Netword
     network :
-      ip_private       : 192.168.70.70
-      ip_public        : 10.0.0.70
+      ip_private       : 192.168.70.80
+      ip_public        : 10.0.0.80
       bridge           : 'eth0'
 
   # | ······ Defining a Forwarded Port
