@@ -17,12 +17,12 @@ dbUser            : 'wordpress'
 dbPass            : 'vagrant'
 
 # | ······ Wordpress Config
-wp_path           : "{{ lookup('env','HOME') }}/www"
+wp_path           : '/home/vagrant/www'
 wordpressTemPath  : 'templates/wp-config.php'
 vhostTemplatePath : 'templates/vhost.conf'
 
 # | ······ Vagrant User and Group
-home              : "{{ lookup('env','HOME') }}"
+home              : '/home/vagrant'
 owner             : 'vagrant'
 group             : 'vagrant'
 
