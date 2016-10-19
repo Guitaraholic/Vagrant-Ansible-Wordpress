@@ -34,14 +34,15 @@ group             : 'vagrant'
 vms:
   - name               : vag-wordpress
     box                : bento/ubuntu-16.04
+    box_version        : 2.2.9
     box_check_update   : false
     ram                : 2048
     cpus               : 2
 
   # | ······ Defining Netword
     network :
-      ip_private       : 192.168.70.80
-      ip_public        : 10.0.0.80
+      ip_private       : 192.168.70.70
+      ip_public        : 10.0.0.70
       bridge           : 'eth0'
 
   # | ······ Defining a Forwarded Port

@@ -33,8 +33,23 @@ Once the process is finished you will see the installation data in your terminal
 
 In your browser go to http://192.168.70.70 and follow the installation process.
 
+
 ![Wordpress](http://i.imgur.com/EiatoRN.png)
 
+**Optional:**
+you can add the next rule to your host file and go to  http://mywordpress.local
+
+```bashbash
+192.168.70.70     mywordpress.local
+```
+
+use this command line to add the rule:
+
+```bash
+$ echo "\n192.168.70.70     mywordpress.local" | sudo tee -a /etc/hosts
+```
+
+-----
 
 #### Access wordpress files:
 
@@ -89,6 +104,7 @@ There are one configuration file ```CONFIG.yml```.
 ```yaml
 - name               : vag-wordpress
   box                : bento/ubuntu-16.04
+  box_version        : 2.2.9
   box_check_update   : false
   ram                : 1028
   cpus               : 1
