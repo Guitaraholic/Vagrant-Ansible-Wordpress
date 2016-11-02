@@ -118,7 +118,21 @@
         groups       : www-data
         append       : yes
 
+    - name           : Add folder html
+      file           :
+        path         : /home/vagrant/html
+        state        : directory
 
+    - name           : Remove folder html
+      file           :
+        path         : /var/www/html
+        state        : absent
+
+    - name           : Symlink html
+      file           :
+        src          : "/home/vagrant/html"
+        dest         : "/var/www/html"
+        state        : "link"
 
 # ··············································································
 # ### Mysql
@@ -207,7 +221,63 @@
         regexp              : "^bind-address"
         line                : "# bind-address = 0.0.0.0"
       notify:
-          - restart mysql
+          - Restart mysql
+
+
+# ··············································································
+# ### PhpMyAdmin
+# ··············································································
+
+    - name      : debconf for pma
+      debconf   :
+        name    : phpmyadmin
+        question: 'phpmyadmin/dbconfig-install'
+        value   : 'true'
+        vtype   : 'boolean'
+
+    - name      : debconf for pma
+      debconf   :
+        name    : phpmyadmin
+        question: 'phpmyadmin/app-password-confirm'
+        value   : '{{mysqlPass}}'
+        vtype   : 'password'
+
+    - name      : debconf for pma
+      debconf   :
+        name    : phpmyadmin
+        question: 'phpmyadmin/mysql/admin-pass'
+        value   : '{{mysqlPass}}'
+        vtype   : 'password'
+
+    - name      : debconf for pma
+      debconf   :
+        name    : phpmyadmin
+        question: 'phpmyadmin/mysql/app-pass'
+        value   : '{{mysqlPass}}'
+        vtype   : 'password'
+
+    - name      : debconf for pma
+      debconf   :
+        name    : phpmyadmin
+        question: 'phpmyadmin/reconfigure-webserver'
+        value   : ''
+        vtype   : 'multiselect'
+
+    - name      : install pma
+      apt       :
+        pkg     : phpmyadmin
+        state   : present
+
+    - name      : configure site
+      file      :
+        path    : /var/www/phpmyadmin
+        src     : /usr/share/phpmyadmin
+        state   : link
+
+      notify    :
+          - restart mysq
+
+
 
 
 
@@ -440,11 +510,14 @@
     # ### Handlers
 # ··············································································
 
-  handlers    :
-    - name    : Restart apache2
-      service :
-        name  : apache2
-        state : restarted
+  handlers     :
+    - name     : Restart apache2
+      service  :
+        name   : apache2
+        state  : restarted
 
-    - name: restart mysql
-      action: service name=mysql state=restarted enabled=yes
+    - name     : Restart mysql
+      service  :
+        name   : mysql
+        state  : restarted
+        enabled: yes

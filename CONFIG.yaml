@@ -47,11 +47,14 @@ vms:
 
   # | ······ Defining a Forwarded Port
     ports :
-      - guest          : 3000
-        host           : 3000
+      - guest          : 80
+        host           : 80
 
-      # - guest          : 80
-      #   host           : 8080
+      - guest          : 8080
+        host           : 8080
+
+      - guest          : 8088
+        host           : 8088
 
   # | ······ Config Synced folders
     syncDir :
@@ -62,6 +65,13 @@ vms:
 
       - host           : www
         guest          : /home/vagrant/www
+        owner          : www-data
+        group          : www-data
+        dmode          : 775
+        fmode          : 775
+
+      - host           : html
+        guest          : /home/vagrant/html
         owner          : www-data
         group          : www-data
         dmode          : 775
