@@ -274,11 +274,6 @@
         src     : /usr/share/phpmyadmin
         state   : link
 
-      notify    :
-          - restart mysq
-
-
-
 
 
 # ··············································································
