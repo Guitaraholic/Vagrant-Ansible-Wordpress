@@ -184,3 +184,18 @@ You can config wordpress database, user and password in ```CONFIG.yml```
   group             : 'vagrant'
 
 ```
+
+
+## PhpMyAdmin
+
+http://192.168.70.99:8088
+
+- **Username:** wordpress
+- **Password:** vagrant
+
+
+## www
+
+http://192.168.70.99:8080
+
+Local folder: ```./html```
