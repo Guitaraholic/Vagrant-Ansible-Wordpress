@@ -4,6 +4,7 @@
 .vagrant/
 www/
 share/
+html/
 
 # |
 # | ······ Ansible
