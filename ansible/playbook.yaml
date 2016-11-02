@@ -275,7 +275,7 @@
         state   : link
 
       notify    :
-          - Restart mysq
+          - restart mysq
 
 
 
@@ -510,11 +510,15 @@
      # ### Handlers
  # ··············································································
 
--  handlers    :
--    - name    : Restart apache2
--      service :
--        name  : apache2
--        state : restarted
--
--    - name: restart mysql
--      action: service name=mysql state=restarted enabled=yes
+# ··············································································
+    # ### Handlers
+# ··············································································
+
+  handlers    :
+    - name    : Restart apache2
+      service :
+        name  : apache2
+        state : restarted
+
+    - name: restart mysql
+      action: service name=mysql state=restarted enabled=yes
