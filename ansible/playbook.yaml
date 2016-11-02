@@ -275,7 +275,7 @@
         state   : link
 
       notify    :
-          - restart mysq
+          - Restart mysq
 
 
 
