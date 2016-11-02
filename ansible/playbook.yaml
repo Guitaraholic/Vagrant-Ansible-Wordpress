@@ -221,7 +221,7 @@
         regexp              : "^bind-address"
         line                : "# bind-address = 0.0.0.0"
       notify:
-          - Restart mysql
+          - restart mysql
 
 
 # ··············································································
@@ -506,18 +506,15 @@
 
 
 
-# ··············································································
-    # ### Handlers
-# ··············································································
+ # ··············································································
+     # ### Handlers
+ # ··············································································
 
-  handlers     :
-    - name     : Restart apache2
-      service  :
-        name   : apache2
-        state  : restarted
-
-    - name     : Restart mysql
-      service  :
-        name   : mysql
-        state  : restarted
-        enabled: yes
+-  handlers    :
+-    - name    : Restart apache2
+-      service :
+-        name  : apache2
+-        state : restarted
+-
+-    - name: restart mysql
+-      action: service name=mysql state=restarted enabled=yes
